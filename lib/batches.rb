@@ -1,6 +1,8 @@
 require "batches/version"
 
 class Batches
+  class NoBlockError < ArgumentError; end
+  
   def self.do(cocurrence, entities, &block)
     raise NoBlockError, "No block given" unless block
     entities.each_slice(cocurrence) do |group|
