@@ -6,13 +6,10 @@ class Batches
   def self.do(cocurrence, entities, &block)
     raise NoBlockError, "No block given" unless block
     entities.each_slice(cocurrence) do |group|
-      threads = []
-      group.each do |entity|
-        threads << Thread.new(entity) do |ent|
-          block.call(ent)
-        end
+      threads = group.map do |entity|
+        Thread.new(entity){|e| block.call(e) }
       end
-      threads.each{|thread| thread.join}
-    end
+      threads.map{|t| t.join }
+    end.flatten(1)
   end
 end
